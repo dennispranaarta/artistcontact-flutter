@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/cubit/dataLogin/cubit/data_login_cubit.dart';
@@ -5,6 +7,8 @@ import 'package:my_app/dto/pesanan.dart';
 import 'package:my_app/services/data_services.dart';
 
 class OrderHistoryScreen extends StatefulWidget {
+  const OrderHistoryScreen({super.key});
+
   @override
   _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
 }
@@ -36,30 +40,30 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order History'),
+        title: const Text('Order History'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : pesananList.isEmpty
-              ? Center(child: Text('No orders found'))
+              ? const Center(child: Text('No orders found'))
               : ListView.builder(
                   itemCount: pesananList.length,
                   itemBuilder: (context, index) {
                     return Card(
                       elevation: 4,
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       child: ListTile(
                         contentPadding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         title: Text(
                           'Artist ID: ${pesananList[index].idArtist}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text('ID: ${pesananList[index].idPesanan}'),
                             Text(
                                 'Tanggal Pembayaran: ${pesananList[index].tanggalPembayaran}'),
@@ -74,10 +78,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           onPressed: () {
                             _showOrderDetailsDialog(pesananList[index]);
                           },
-                          child: Text('Order Detail'),
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            backgroundColor: const Color.fromARGB(221, 30, 30, 30),
                           ),
+                          child: const Text('Order Detail'),
                         ),
                       ),
                     );
@@ -91,7 +96,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Order Details'),
+          title: const Text('Order Details'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,10 +113,14 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(221, 30, 30, 30),
+              ),
+              child: const Text('Close'),
             ),
           ],
         );

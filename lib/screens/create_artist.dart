@@ -1,9 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/endpoints/endpoints.dart';
 
 class NewArtistScreen extends StatefulWidget {
+  const NewArtistScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _NewArtistScreenState createState() => _NewArtistScreenState();
 }
 
@@ -19,7 +24,7 @@ class _NewArtistScreenState extends State<NewArtistScreen> {
         deskripsiArtistController.text.isEmpty ||
         nomorArtistController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
+        const SnackBar(content: Text('Please fill in all fields')),
       );
       return;
     }
@@ -34,20 +39,17 @@ class _NewArtistScreenState extends State<NewArtistScreen> {
       });
       if (response.statusCode == 200) {
         // Handle success
-        print('Successfully created artist');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Artist created successfully')),
+          const SnackBar(content: Text('Artist created successfully')),
         );
       } else {
         // Handle other status codes
-        print('Failed to create artist: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create artist')),
+          const SnackBar(content: Text('Failed to create artist')),
         );
       }
     } catch (e) {
       // Handle other errors
-      print('Exception during artist creation: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -56,143 +58,153 @@ class _NewArtistScreenState extends State<NewArtistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFB4B4B4), Color(0xFF1E1E1E)],
         ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(24.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(25.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 10,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Selamat Datang ke Halaman Admin',
-                        style: TextStyle(
-                          fontSize: 28.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF0072FF),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.0),
-                      TextField(
-                        controller: namaArtistController,
-                        decoration: InputDecoration(
-                          labelText: 'Nama Artist',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(25.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 5,
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
                           ),
-                          prefixIcon: Icon(Icons.person, color: Color(0xFF0072FF)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-                        ),
+                        ],
                       ),
-                      SizedBox(height: 20.0),
-                      DropdownButtonFormField<String>(
-                        value: kategoriArtist,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            kategoriArtist = newValue!;
-                          });
-                        },
-                        items: <String>['Internasional', 'Nasional', 'Provinsi']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          labelText: 'Kategori Artist',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          prefixIcon: Icon(Icons.category, color: Color(0xFF0072FF)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-                        ),
-                      ),
-                      SizedBox(height: 20.0),
-                      TextField(
-                        controller: deskripsiArtistController,
-                        decoration: InputDecoration(
-                          labelText: 'Deskripsi Artist',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          prefixIcon: Icon(Icons.description, color: Color(0xFF0072FF)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-                        ),
-                      ),
-                      SizedBox(height: 20.0),
-                      TextField(
-                        controller: nomorArtistController,
-                        decoration: InputDecoration(
-                          labelText: 'Nomor Artist',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          prefixIcon: Icon(Icons.phone, color: Color(0xFF0072FF)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-                        ),
-                      ),
-                      SizedBox(height: 30.0),
-                      Container(
-                        width: double.infinity,
-                        height: 60.0,
-                        child: ElevatedButton(
-                          onPressed: createArtist,
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 20.0), backgroundColor: Color(0xFF0072FF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            shadowColor: Colors.black.withOpacity(0.25),
-                            elevation: 10,
-                          ),
-                          child: Text(
-                            'Create Artist',
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Selamat Datang ke Halaman Admin',
                             style: TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.white,
+                              fontSize: 28.0,
                               fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(221, 30, 30, 30),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 30.0),
+                          TextField(
+                            controller: namaArtistController,
+                            decoration: InputDecoration(
+                              labelText: 'Nama Artist',
+                              labelStyle: const TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              prefixIcon: const Icon(Icons.person, color: Color.fromARGB(221, 30, 30, 30)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 20.0),
+                          DropdownButtonFormField<String>(
+                            value: kategoriArtist,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                kategoriArtist = newValue!;
+                              });
+                            },
+                            items: <String>['Internasional', 'Nasional', 'Provinsi']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            decoration: InputDecoration(
+                              labelText: 'Kategori Artist',
+                              labelStyle: const TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              prefixIcon: const Icon(Icons.category, color: Color.fromARGB(221, 30, 30, 30)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          TextField(
+                            controller: deskripsiArtistController,
+                            decoration: InputDecoration(
+                              labelText: 'Deskripsi Artist',
+                              labelStyle: const TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              prefixIcon: const Icon(Icons.description, color: Color.fromARGB(221, 30, 30, 30)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          TextField(
+                            controller: nomorArtistController,
+                            decoration: InputDecoration(
+                              labelText: 'Nomor Artist',
+                              labelStyle: const TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              prefixIcon: const Icon(Icons.phone, color: Color.fromARGB(221, 30, 30, 30)),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                            ),
+                          ),
+                          const SizedBox(height: 30.0),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 60.0,
+                            child: ElevatedButton(
+                              onPressed: createArtist,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                                backgroundColor: const Color.fromARGB(221, 30, 30, 30),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                shadowColor: Colors.black.withOpacity(0.25),
+                                elevation: 10,
+                              ),
+                              child: const Text(
+                                'Create Artist',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

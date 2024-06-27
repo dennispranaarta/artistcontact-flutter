@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/dto/CustomerService.dart';
@@ -16,26 +18,7 @@ import 'package:my_app/utils/constants.dart';
 import 'package:my_app/utils/secure_storage_util.dart';
 
 class DataService {
-  static Future<List<News>> fetchNews() async {
-    final response = await http.get(Uri.parse(Endpoints.news));
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonResponse = jsonDecode(response.body);
-      return jsonResponse.map((item) => News.fromJson(item)).toList();
-    } else {
-      // Handle error
-      throw Exception('Failed to load news');
-    }
-  }
 
-  static Future<void> sendNews(String title, String body) async {
-    Map<String, String> newsData = {
-      "title": title,
-      "body": body,
-    };
-    String jsonData = jsonEncode(newsData);
-    await http.post(Uri.parse(Endpoints.news),
-        body: jsonData, headers: {'Content-Type': 'application/json'});
-  }
 
   static Future<List<Datas>> fetchDatas() async {
     final response = await http.get(Uri.parse(Endpoints.datas));
@@ -75,29 +58,7 @@ class DataService {
         body: jsonData, headers: {'Content-type': 'application/json'});
   }
 
-  // post data to endpoint news
-  static Future<News> createNews(String title, String body) async {
-    final response = await http.post(
-      Uri.parse(Endpoints.news),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'title': title,
-        'body': body,
-      }),
-    );
-  
 
-    if (response.statusCode == 201) {
-      // Check for creation success (201 Created)
-      final jsonResponse = jsonDecode(response.body);
-      return News.fromJson(jsonResponse);
-    } else {
-      // Handle error
-      throw Exception('Failed to create post: ${response.statusCode}');
-    }
-  }
 
   static Future<List<Balances>> fetchBalances() async {
     final response = await http.get(Uri.parse(Endpoints.balance));
@@ -236,13 +197,9 @@ static Future<List<Pesanan>> getOrders() async {
         List<dynamic> ordersJson = data['datas'];
         return ordersJson.map((json) => Pesanan.fromJson(json)).toList();
       } catch (e) {
-        print('Failed to parse response body: ${response.body}');
-        print('Error: $e');
         throw Exception('Failed to parse orders');
       }
     } else {
-      print('Failed to load orders with status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
       throw Exception('Failed to load orders');
     }
   }
@@ -279,21 +236,18 @@ static Future<void> deleteOrder(int idPesanan) async {
   }
 
 //Send data Artist
-static const String baseUrl = '${Endpoints.artist}/create';
+static String baseURLLive = '${Endpoints.artist}/create';
 
   Future<void> createArtist(Map<String, String> data) async {
     try {
       var response = await http.post(Uri.parse('${Endpoints.artist}/create'), body: data);
       if (response.statusCode == 200) {
         // Handle success
-        print('Successfully created artist');
       } else {
         // Handle other status codes
-        print('Failed to create artist: ${response.body}');
       }
     } catch (e) {
       // Handle other errors
-      print('Exception during artist creation: $e');
     }
   }
 
@@ -307,11 +261,9 @@ static const String baseUrl = '${Endpoints.artist}/create';
         List<dynamic> data = json.decode(response.body)['datas'];
         return data.map((item) => Pesanan.fromJson(item)).toList();
       } else {
-        print('Failed to fetch pesanan: ${response.body}');
         return [];
       }
     } catch (e) {
-      print('Exception during fetching pesanan: $e');
       return [];
     }
   }

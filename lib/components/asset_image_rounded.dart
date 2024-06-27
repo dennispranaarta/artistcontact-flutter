@@ -1,4 +1,3 @@
-// ignore_for_file: use_super_parameters
 
 import 'package:flutter/material.dart';
 
@@ -6,9 +5,9 @@ class AssetImageRounded extends StatelessWidget {
   final String imagePath;
 
   const AssetImageRounded({
-    Key? key,
+    super.key,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import 'package:my_app/utils/secure_storage_util.dart';
 
 class AuthWrapper extends StatelessWidget {
   final Widget child;
-  const AuthWrapper({Key? key, required this.child}) : super(key: key);
+  const AuthWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

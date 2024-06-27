@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, library_private_types_in_public_api, empty_catches
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,6 +8,8 @@ import 'package:my_app/endpoints/endpoints.dart';
 import 'package:my_app/screens/AddOrderPage.dart'; // Assuming this is the import for AddOrderPage
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -14,6 +18,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, List<dynamic>> categorizedArtists = {};
   List<dynamic> allArtists = [];
   String searchQuery = '';
+  String? _profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchArtists();
+    fetchUserProfile();
+  }
 
   Future<void> fetchArtists() async {
     String url = '${Endpoints.artist}/read';
@@ -26,10 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
           categorizedArtists = _groupArtistsByCategory(data); // Group artists by category
         });
       } else {
-        print('Failed to fetch artists: ${response.body}');
       }
     } catch (e) {
-      print('Exception during fetching artists: $e');
+    }
+  }
+
+  Future<void> fetchUserProfile() async {
+    // Assumes that you have the user ID available
+    int userId = 1; // Replace with actual user ID
+    String url = '${Endpoints.user}/photo/$userId';
+
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        setState(() {
+          _profileImageUrl = url;
+        });
+      } else {
+      }
+    } catch (e) {
     }
   }
 
@@ -58,33 +85,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchArtists();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('List Artists'),
         backgroundColor: Colors.white,
-        elevation: 0,
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Search Artist',
-                labelStyle: TextStyle(color: Colors.blueAccent),
-                prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                labelStyle: TextStyle(color: Colors.black),
+                prefixIcon: Icon(Icons.search, color: Colors.black),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
+                  borderSide: BorderSide(color: Colors.black),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
+                  borderSide: BorderSide(color: Colors.black),
                 ),
               ),
               onChanged: (value) {
@@ -107,13 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ExpansionTile(
-                      backgroundColor: Colors.blue[50],
+                      backgroundColor: Colors.black12,
                       title: Text(
                         category,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
+                          color: Colors.black,
                         ),
                       ),
                       children: categorizedArtists[category]!.map((artist) {
@@ -134,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class ArtistTile extends StatelessWidget {
   final Map<String, dynamic> artist;
 
-  ArtistTile({required this.artist});
+  const ArtistTile({super.key, required this.artist});
 
   @override
   Widget build(BuildContext context) {
@@ -149,15 +169,15 @@ class ArtistTile extends StatelessWidget {
         child: ListTile(
           title: Text(
             artist['nama_artist'],
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              Text('ID: ${artist['id_artist']}', style: TextStyle(color: Colors.grey)),
+              Text('ID: ${artist['id_artist']}', style: const TextStyle(color: Colors.grey)),
               const SizedBox(height: 4),
-              Text('Kategori: ${artist['kategori_artist']}', style: TextStyle(color: Colors.grey)),
+              Text('Kategori: ${artist['kategori_artist']}', style: const TextStyle(color: Colors.grey)),
             ],
           ),
           trailing: ElevatedButton.icon(
@@ -173,7 +193,7 @@ class ArtistTile extends StatelessWidget {
             label: const Text('Detail', style: TextStyle(color: Colors.white)),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: const Color.fromARGB(221, 30, 30, 30),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -188,7 +208,7 @@ class ArtistTile extends StatelessWidget {
 class DetailScreen extends StatelessWidget {
   final Map<String, dynamic> artist;
 
-  DetailScreen({required this.artist});
+  const DetailScreen({super.key, required this.artist});
 
   @override
   Widget build(BuildContext context) {
@@ -197,15 +217,17 @@ class DetailScreen extends StatelessWidget {
         title: Text(artist['nama_artist']),
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.blueAccent), toolbarTextStyle: TextTheme(
-          headline6: TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold),
-        ).bodyText2, titleTextStyle: TextTheme(
-          headline6: TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold),
-        ).headline6,
+        iconTheme: const IconThemeData(color: Color.fromARGB(221, 30, 30, 30)),
+        toolbarTextStyle: const TextTheme(
+          titleLarge: TextStyle(color: Color.fromARGB(221, 30, 30, 30), fontSize: 20, fontWeight: FontWeight.bold),
+        ).bodyMedium,
+        titleTextStyle: const TextTheme(
+          titleLarge: TextStyle(color: Color.fromARGB(221, 30, 30, 30), fontSize: 20, fontWeight: FontWeight.bold),
+        ).titleLarge,
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),
@@ -214,7 +236,7 @@ class DetailScreen extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 2,
                 blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+                offset: const Offset(0, 3), // changes position of shadow
               ),
             ],
           ),
@@ -223,30 +245,30 @@ class DetailScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 'ID: ${artist['id_artist']}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 30, 30, 30)),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Kategori: ${artist['kategori_artist']}',
-                style: TextStyle(fontSize: 16, color: Colors.blueAccent),
+                style: const TextStyle(fontSize: 16, color: Color.fromARGB(221, 30, 30, 30)),
               ),
-              SizedBox(height: 8),
-              Divider(color: Colors.grey),
-              SizedBox(height: 8),
-              Text(
+              const SizedBox(height: 8),
+              const Divider(color: Colors.grey),
+              const SizedBox(height: 8),
+              const Text(
                 'Deskripsi:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 30, 30, 30)),
               ),
               Text(
                 '${artist['deskripsi_artist']}',
-                style: TextStyle(fontSize: 14, color: Colors.black),
+                style: const TextStyle(fontSize: 14, color: Color.fromARGB(221, 30, 30, 30)),
               ),
-              SizedBox(height: 8),
-              Divider(color: Colors.grey),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
+              const Divider(color: Colors.grey),
+              const SizedBox(height: 8),
               Text(
                 'Nomor: ${artist['nomor_artist']}',
-                style: TextStyle(fontSize: 16, color: Colors.blueAccent),
+                style: const TextStyle(fontSize: 16, color: Color.fromARGB(221, 30, 30, 30)),
               ),
             ],
           ),
@@ -257,12 +279,12 @@ class DetailScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddOrderPage(),
+              builder: (context) => const AddOrderPage(),
             ),
           );
         },
-        backgroundColor: Colors.blueAccent,
-        child: Icon(Icons.add, color: Colors.white),
+        backgroundColor: Colors.black,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -271,13 +293,14 @@ class DetailScreen extends StatelessWidget {
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: HomeScreen(),
+    home: const HomeScreen(),
     theme: ThemeData(
-      primaryColor: Colors.blueAccent,
-      textTheme: TextTheme(
-        bodyText1: TextStyle(color: Colors.blueAccent),
-        bodyText2: TextStyle(color: Colors.blueAccent),
-      ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.blueAccent),
+      primaryColor: Colors.black,
+      textTheme: const TextTheme(
+        bodyLarge: TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+        bodyMedium: TextStyle(color: Color.fromARGB(221, 30, 30, 30)),
+      ),
+      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.black),
     ),
   ));
 }

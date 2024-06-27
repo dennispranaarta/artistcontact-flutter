@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import, use_key_in_widget_constructors, library_private_types_in_public_api
+// ignore_for_file: unused_import, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,16 +11,19 @@ import 'package:my_app/screens/history_user.dart';
 import 'package:my_app/screens/home_screen.dart';
 import 'package:my_app/screens/login_screen.dart';
 import 'package:my_app/screens/profile_screen.dart';
+import 'package:my_app/screens/read_artist.dart';
 import 'history_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class MainDrawer extends StatefulWidget {
+class AdminDrawer extends StatefulWidget {
+  const AdminDrawer({super.key});
+
   @override
-  _MainDrawerState createState() => _MainDrawerState();
+  _AdminDrawerState createState() => _AdminDrawerState();
 }
 
-class _MainDrawerState extends State<MainDrawer> {
+class _AdminDrawerState extends State<AdminDrawer> {
   String _namaLengkap = '';
   String _username = '';
   String? _profileImageUrl;
@@ -116,12 +119,12 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
           ListTile(
-            title: const Text('History'),
+            title: const Text('Add Artist'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const OrderHistoryScreen()),
+                MaterialPageRoute(builder: (context) => const NewArtistScreen()),
               );
             },
           ),
@@ -131,27 +134,17 @@ class _MainDrawerState extends State<MainDrawer> {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                MaterialPageRoute(builder: (context) => const ReadArtistScreen()),
               );
             },
           ),
           ListTile(
-            title: const Text('Pemesanan'),
+            title: const Text('Order History'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddOrderPage()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Help'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HelpScreen()),
+                MaterialPageRoute(builder: (context) => const HistoryScreen()),
               );
             },
           ),

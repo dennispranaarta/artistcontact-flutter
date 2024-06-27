@@ -1,9 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api, empty_catches
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:my_app/endpoints/endpoints.dart';
 
 class ReadArtistScreen extends StatefulWidget {
+  const ReadArtistScreen({super.key});
+
   @override
   _ReadArtistScreenState createState() => _ReadArtistScreenState();
 }
@@ -41,10 +45,8 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
           }
         });
       } else {
-        print('Failed to fetch artists: ${response.body}');
       }
     } catch (e) {
-      print('Exception during fetching artists: $e');
     }
   }
 
@@ -72,13 +74,10 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
     try {
       var response = await http.delete(Uri.parse(url));
       if (response.statusCode == 200) {
-        print('Successfully deleted artist');
         fetchArtists();
       } else {
-        print('Failed to delete artist: ${response.body}');
       }
     } catch (e) {
-      print('Exception during deleting artist: $e');
     }
   }
 
@@ -92,13 +91,10 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
         'nomor_artist': nomorArtist,
       });
       if (response.statusCode == 200) {
-        print('Successfully updated artist');
         fetchArtists();
       } else {
-        print('Failed to update artist: ${response.body}');
       }
     } catch (e) {
-      print('Exception during updating artist: $e');
     }
   }
 
@@ -106,11 +102,11 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+            colors: [Color.fromARGB(255, 207, 207, 207), Color.fromARGB(255, 21, 21, 21)],
           ),
         ),
         child: SafeArea(
@@ -122,7 +118,7 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                   controller: searchController,
                   decoration: InputDecoration(
                     labelText: 'Search Artist by Name',
-                    prefixIcon: Icon(Icons.search, color: Color(0xFF0072FF)),
+                    prefixIcon: const Icon(Icons.search, color: Color.fromARGB(221, 30, 30, 30)),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
@@ -134,12 +130,12 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
               ),
               Expanded(
                 child: artistsByCategory.isEmpty
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : ListView(
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         children: artistsByCategory.keys.map((category) {
                           return Card(
-                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -147,16 +143,17 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                             child: ExpansionTile(
                               title: Text(
                                 category,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(221, 30, 30, 30),
                                 ),
                               ),
                               children: artistsByCategory[category]!.map<Widget>((artist) {
                                 return ListTile(
                                   title: Text(
                                     artist['nama_artist'],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -166,9 +163,9 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                                     children: <Widget>[
                                       Text(
                                         'Deskripsi: ${artist['deskripsi_artist']}',
-                                        style: TextStyle(color: Colors.black54),
+                                        style: const TextStyle(color: Colors.black54),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text('Nomor: ${artist['nomor_artist']}'),
                                     ],
                                   ),
@@ -176,29 +173,29 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       IconButton(
-                                        icon: Icon(Icons.edit, color: Color(0xFF0072FF)),
+                                        icon: const Icon(Icons.edit, color: Color.fromARGB(221, 30, 30, 30)),
                                         onPressed: () {
                                           _showUpdateDialog(context, artist);
                                         },
                                       ),
                                       IconButton(
-                                        icon: Icon(Icons.delete, color: Colors.red),
+                                        icon: const Icon(Icons.delete, color: Colors.red),
                                         onPressed: () {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text('Delete Artist'),
+                                                title: const Text('Delete Artist'),
                                                 content: Text('Are you sure you want to delete ${artist['nama_artist']}?'),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: Text('Cancel'),
+                                                    child: const Text('Cancel'),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                     },
                                                   ),
                                                   TextButton(
-                                                    child: Text('Delete'),
+                                                    child: const Text('Delete'),
                                                     onPressed: () {
                                                       Navigator.of(context).pop();
                                                       deleteArtist(artist['id_artist']);
@@ -236,7 +233,7 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Update Artist'),
+          title: const Text('Update Artist'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,12 +245,12 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: Icon(Icons.person, color: Color(0xFF0072FF)),
+                    prefixIcon: const Icon(Icons.person, color: Color.fromARGB(221, 30, 30, 30)),
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 TextField(
                   controller: kategoriArtistController,
                   decoration: InputDecoration(
@@ -261,12 +258,12 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: Icon(Icons.category, color: Color(0xFF0072FF)),
+                    prefixIcon: const Icon(Icons.category, color: Color.fromARGB(221, 30, 30, 30)),
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 TextField(
                   controller: deskripsiArtistController,
                   decoration: InputDecoration(
@@ -274,12 +271,12 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: Icon(Icons.description, color: Color(0xFF0072FF)),
+                    prefixIcon: const Icon(Icons.description, color: Color.fromARGB(221, 30, 30, 30)),
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 TextField(
                   controller: nomorArtistController,
                   decoration: InputDecoration(
@@ -287,7 +284,7 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: Icon(Icons.phone, color: Color(0xFF0072FF)),
+                    prefixIcon: const Icon(Icons.phone, color: Color.fromARGB(221, 30, 30, 30)),
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
@@ -298,12 +295,13 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
           actions: <Widget>[
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red, side: BorderSide(color: Colors.red),
+                foregroundColor: Colors.red,
+                side: const BorderSide(color: Colors.red),
               ),
-              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -317,12 +315,15 @@ class _ReadArtistScreenState extends State<ReadArtistScreen> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF0072FF),
+                backgroundColor: const Color.fromARGB(221, 30, 30, 30),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
-              child: Text('Update', style: TextStyle(color: Colors.white),),
+              child: const Text(
+                'Update',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );

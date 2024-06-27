@@ -1,10 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/endpoints/endpoints.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -26,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Username dan password diperlukan'),
           duration: Duration(seconds: 2),
         ),
@@ -35,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // Mengirim data registrasi ke backend
-    final url = Uri.parse('${Endpoints.register}');
+    final url = Uri.parse(Endpoints.register);
     final response = await http.post(
       url,
       body: {
@@ -53,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Registrasi berhasil untuk $registeredUsername'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       // Setelah berhasil registrasi, bisa navigasi ke halaman lain misalnya login
@@ -63,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -73,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        title: const Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -85,51 +87,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Username',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.person),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.lock),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _namaLengkapController,
               decoration: InputDecoration(
                 labelText: 'Nama Lengkap',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.person),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _nohpController,
               decoration: InputDecoration(
                 labelText: 'Nomor HP',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.phone),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.phone),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _addressController,
               decoration: InputDecoration(
                 labelText: 'Alamat',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.home),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                prefixIcon: const Icon(Icons.home),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () => _register(context),
-              child: Text('Register'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15), backgroundColor: const Color.fromARGB(221, 30, 30, 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              child: const Text(
+                'Register',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ],
         ),

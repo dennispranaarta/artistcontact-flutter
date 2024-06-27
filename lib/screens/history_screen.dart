@@ -1,8 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 import 'package:my_app/services/data_services.dart';
 import 'package:my_app/dto/pesanan.dart';
 
 class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
+
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
 }
@@ -17,14 +21,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _deleteOrder(int idPesanan) async {
-    print('Attempting to delete order with ID: $idPesanan'); // Debug statement
     try {
       await DataService.deleteOrder(idPesanan);
       setState(() {
         _ordersFuture = DataService.getOrders();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Order successfully deleted'),
           backgroundColor: Colors.black,
         ),
@@ -53,7 +56,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           return Theme(
             data: ThemeData.light().copyWith(
               primaryColor: Colors.blue,
-              buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary), colorScheme: ColorScheme.light(primary: Colors.blue).copyWith(secondary: Colors.blueAccent),
+              buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+              colorScheme: const ColorScheme.light(primary: Colors.blue).copyWith(secondary: Colors.blueAccent),
             ),
             child: child!,
           );
@@ -69,7 +73,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
           title: const Text(
@@ -85,7 +89,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 decoration: InputDecoration(
                   labelText: 'Payment Date',
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today, color: Colors.blue),
+                    icon: const Icon(Icons.calendar_today, color: Colors.blue),
                     onPressed: () => _selectDate(context, pembayaranController),
                   ),
                   border: OutlineInputBorder(
@@ -93,14 +97,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: tampilController,
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Show Date',
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today, color: Colors.blue),
+                    icon: const Icon(Icons.calendar_today, color: Colors.blue),
                     onPressed: () => _selectDate(context, tampilController),
                   ),
                   border: OutlineInputBorder(
@@ -113,7 +117,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           actions: <Widget>[
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red, side: BorderSide(color: Colors.red),
+                foregroundColor: Colors.red,
+                side: const BorderSide(color: Colors.red),
               ),
               child: const Text('Cancel'),
               onPressed: () {
@@ -122,7 +127,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Set the text color to white
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(221, 30, 30, 30), // Set the background color here
               ),
               child: const Text(
                 'Update',
@@ -142,7 +148,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     _ordersFuture = DataService.getOrders();
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Order successfully updated'),
                       backgroundColor: Colors.black,
                     ),
@@ -168,10 +174,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
-          title: Text(
+          title: const Text(
             'Order Details',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -187,7 +193,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           actions: <Widget>[
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red, side: BorderSide(color: Colors.red),
+                foregroundColor: Colors.red,
+                side: const BorderSide(color: Colors.red),
               ),
               child: const Text('Close'),
               onPressed: () {
@@ -206,15 +213,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
       child: Row(
         children: [
           Icon(icon, color: Colors.blue),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(
             '$label: ',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(color: Colors.black54),
+              style: const TextStyle(color: Colors.black54),
             ),
           ),
         ],
@@ -224,11 +231,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Order History'),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFB4B4B4), Color(0xFF1E1E1E)],
+        ),
       ),
-      body: FutureBuilder<List<Pesanan>>(
+      child: FutureBuilder<List<Pesanan>>(
         future: _ordersFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -316,35 +327,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
     return (await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-          ),
-          title: const Text('Confirm Deletion'),
-          content: const Text('Are you sure you want to delete this order?'),
-          actions: [
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red, side: BorderSide(color: Colors.red),
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.red, // Set the text color to white
-              ),
-              child: const Text(
-                'Delete',
-                style: TextStyle(color: Colors.white), // Ensure the text color is white
-              ),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    )) ?? false;
+              title: const Text('Confirm Deletion'),
+              content: const Text('Are you sure you want to delete this order?'),
+              actions: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red, // Keep the delete button color red
+                  ),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.white), // Ensure the text color is white
+                  ),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        )) ??
+        false;
   }
 }

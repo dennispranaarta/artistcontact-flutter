@@ -6,7 +6,7 @@ import 'package:my_app/cubit/balance/cubit/balance_cubit.dart';
 import 'package:my_app/utils/constants.dart';
 
 class BalanceScreen extends StatefulWidget {
-  const BalanceScreen({Key? key}) : super(key: key);
+  const BalanceScreen({super.key});
 
   @override
   _BalanceScreenState createState() => _BalanceScreenState();

@@ -1,6 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +10,8 @@ import 'package:my_app/cubit/dataLogin/cubit/data_login_cubit.dart';
 import 'package:my_app/endpoints/endpoints.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -48,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _namaLengkapController.text = userData?['nama_lengkap'] ?? '';
           _nohpController.text = userData?['nohp'] ?? '';
           _addressController.text = userData?['address'] ?? '';
-          _imageUrl = userData?['image_url'] ?? ''; // Fetch the image URL
+          _imageUrl = '${Endpoints.user}/photo/$idUser'; // Set image URL
           isLoading = false;
         });
       } else {
@@ -82,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Profile updated successfully'),
           duration: Duration(seconds: 2),
         ),
@@ -97,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -138,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final newImageUrl = responseData['image_url']; // Assume the server returns the new image URL
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Photo uploaded successfully'),
           duration: Duration(seconds: 2),
         ),
@@ -153,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       fetchUserData();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to upload photo'),
           duration: Duration(seconds: 2),
         ),
@@ -167,15 +171,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void _showImageSourceActionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Colors.blue,
+        title: const Text('Profile', style: TextStyle(color: Color.fromARGB(221, 30, 30, 30)),),
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit, color: Color.fromARGB(221, 30, 30, 30)),
             onPressed: () {
               _showEditProfileDialog();
             },
@@ -185,11 +219,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocBuilder<DataLoginCubit, DataLoginState>(
         builder: (context, state) {
           return isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : errorMessage.isNotEmpty
                   ? Center(child: Text(errorMessage))
                   : SingleChildScrollView(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: _buildProfileBox(),
                     );
         },
@@ -199,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildProfileBox() {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
@@ -208,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -218,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Center(
             child: GestureDetector(
               onTap: () {
-                _pickImage(ImageSource.camera);
+                _showImageSourceActionSheet(context);
               },
               child: CircleAvatar(
                 radius: 50,
@@ -228,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? NetworkImage(_imageUrl!) as ImageProvider
                         : null,
                 child: _image == null && _imageUrl == null
-                    ? Icon(
+                    ? const Icon(
                         Icons.camera_alt,
                         size: 50,
                       )
@@ -236,36 +270,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Center(
             child: ElevatedButton(
               onPressed: _uploadImage,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                backgroundColor: const Color.fromARGB(221, 30, 30, 30),
               ),
-              child: Text('Upload Photo'),
+              child: const Text('Upload Photo'),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildProfileItem(
             'Username',
             '${userData?['username'] ?? ''}',
           ),
-          SizedBox(height: 20),
-          isEditing ? _buildEditableProfileItem('Nama Lengkap', _namaLengkapController) : _buildProfileItem('Nama Lengkap', _namaLengkapController.text),
-          SizedBox(height: 20),
-          isEditing ? _buildEditableProfileItem('No HP', _nohpController) : _buildProfileItem('No HP', _nohpController.text),
-          SizedBox(height: 20),
-          isEditing ? _buildEditableProfileItem('Alamat', _addressController) : _buildProfileItem('Alamat', _addressController.text),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
+          isEditing
+              ? _buildEditableProfileItem('Nama Lengkap', _namaLengkapController)
+              : _buildProfileItem('Nama Lengkap', _namaLengkapController.text),
+          const SizedBox(height: 20),
+          isEditing
+              ? _buildEditableProfileItem('No HP', _nohpController)
+              : _buildProfileItem('No HP', _nohpController.text),
+          const SizedBox(height: 20),
+          isEditing
+              ? _buildEditableProfileItem('Alamat', _addressController)
+              : _buildProfileItem('Alamat', _addressController.text),
+          const SizedBox(height: 20),
           if (isEditing)
             Center(
               child: ElevatedButton(
                 onPressed: () => updateUserProfile(),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(221, 30, 30, 30),
                 ),
-                child: Text('Update Profile'),
+                child: const Text('Update Profile'),
               ),
             ),
         ],
@@ -279,16 +321,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           value,
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
       ],
     );
@@ -300,18 +341,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
           ),
         ),
-        SizedBox(height: 8),
-        TextFormField(
+        const SizedBox(height: 8),
+        TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
-            labelText: title,
+            contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
           ),
         ),
       ],
