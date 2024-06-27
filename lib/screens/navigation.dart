@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/screens/AddOrderPage.dart';
+import 'package:my_app/screens/history_user.dart';
 import 'package:my_app/screens/home_screen.dart';
-import 'checklist_screen.dart';
-import 'history_screen.dart';
-import 'profile_screen.dart';
-import 'drawer.dart'; 
+import 'package:my_app/screens/profile_screen.dart'; // Import ProfileScreen
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'drawer.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -15,12 +15,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
   int selectedIndex = 1;
 
   final List<Widget> _screens = [
-    HistoryScreen(),
+    OrderHistoryScreen(),
     HomeScreen(),
-    ChecklistScreen(),
+    AddOrderPage(),
   ];
 
-  final List<String> _pageTitles = ['History', 'Home', 'Checklist'];
+  final List<String> _pageTitles = ['History', 'Home', 'Order'];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -47,14 +47,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
               icon: Icon(Icons.account_circle_rounded),
               iconSize: 46,
               onPressed: () {
+                // Navigasi ke ProfileScreen ketika ikon profil ditekan
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => ProfileScreen(
-                            userName: 'Dennis Prana',
-                            userEmail: '@dennispranaa27',
-                            userBio: 'Halo',
-                          )),
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
                 );
               },
             ),

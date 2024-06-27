@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'national_screen.dart';
-import 'provincial_screen.dart';
-import 'international_screen.dart';
-import 'checklist_screen.dart';
-import 'history_screen.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:my_app/endpoints/endpoints.dart';
+import 'package:my_app/screens/AddOrderPage.dart'; // Assuming this is the import for AddOrderPage
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,199 +11,273 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentSliderIndex = 0;
-  // ignore: unused_field
-  int _selectedIndex = 0; 
+  Map<String, List<dynamic>> categorizedArtists = {};
+  List<dynamic> allArtists = [];
+  String searchQuery = '';
 
-  final List<String> _sliderImages = [
-    'assets/images/traviss.jpg',
-    'assets/images/raisa.jpg',
-    'assets/images/nostress.jpg',
-  ];
+  Future<void> fetchArtists() async {
+    String url = '${Endpoints.artist}/read';
+    try {
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body)['datas'];
+        setState(() {
+          allArtists = data;
+          categorizedArtists = _groupArtistsByCategory(data); // Group artists by category
+        });
+      } else {
+        print('Failed to fetch artists: ${response.body}');
+      }
+    } catch (e) {
+      print('Exception during fetching artists: $e');
+    }
+  }
 
-  final List<Map<String, dynamic>> _categories = [
-    {
-      'name': 'Internasional',
-      'description': 'Artis-artis terkenal dari berbagai negara di seluruh dunia.',
-      'totalArtists': '3',
-      'icon': Icons.public_rounded,
-      'targetScreen': InternationalScreen(),
-    },
-    {
-      'name': 'Nasional',
-      'description': 'Artis-artis ternama dari dalam negeri.',
-      'totalArtists': '3',
-      'icon': Icons.flag_rounded,
-      'targetScreen': NationalScreen(),
-    },
-    {
-      'name': 'Provinsi',
-      'description': 'Artis-artis lokal dari berbagai provinsi di Indonesia.',
-      'totalArtists': '3',
-      'icon': Icons.location_city_rounded,
-      'targetScreen': ProvincialScreen(),
-    },
-  ];
+  Map<String, List<dynamic>> _groupArtistsByCategory(List<dynamic> artists) {
+    Map<String, List<dynamic>> groupedArtists = {};
+    for (var artist in artists) {
+      String category = artist['kategori_artist'];
+      if (!groupedArtists.containsKey(category)) {
+        groupedArtists[category] = [];
+      }
+      groupedArtists[category]!.add(artist);
+    }
+    return groupedArtists;
+  }
+
+  Map<String, List<dynamic>> searchArtists(String query) {
+    Map<String, List<dynamic>> filtered = {};
+    for (var category in categorizedArtists.keys) {
+      var filteredList = categorizedArtists[category]!.where((artist) =>
+          artist['nama_artist'].toLowerCase().contains(query.toLowerCase())).toList();
+      if (filteredList.isNotEmpty) {
+        filtered[category] = filteredList;
+      }
+    }
+    return filtered;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchArtists();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 200,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentSliderIndex = index;
-                  });
-                },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('List Artists'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Search Artist',
+                labelStyle: TextStyle(color: Colors.blueAccent),
+                prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
-              items: _sliderImages.map((image) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage(image),
-                          fit: BoxFit.cover,
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                  categorizedArtists = searchArtists(searchQuery);
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: categorizedArtists.keys.map((category) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ExpansionTile(
+                      backgroundColor: Colors.blue[50],
+                      title: Text(
+                        category,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
                         ),
                       ),
-                    );
-                  },
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _sliderImages.map((image) {
-                int index = _sliderImages.indexOf(image);
-                return Container(
-                  width: 8.0,
-                  height: 8.0,
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentSliderIndex == index ? Colors.blue : Colors.blue.withOpacity(0.4),
+                      children: categorizedArtists[category]!.map((artist) {
+                        return ArtistTile(artist: artist);
+                      }).toList(),
+                    ),
                   ),
                 );
               }).toList(),
             ),
-            SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _categories.length,
-                itemBuilder: (context, index) {
-                  return _buildCategoryButton(_categories[index], context);
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Center(
-                child: Text(
-                  '"Ayo hubungi artismu dengan cepat melalui ArtistContact"',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                  ),
-                  textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ArtistTile extends StatelessWidget {
+  final Map<String, dynamic> artist;
+
+  ArtistTile({required this.artist});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Card(
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: ListTile(
+          title: Text(
+            artist['nama_artist'],
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text('ID: ${artist['id_artist']}', style: TextStyle(color: Colors.grey)),
+              const SizedBox(height: 4),
+              Text('Kategori: ${artist['kategori_artist']}', style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+          trailing: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailScreen(artist: artist),
                 ),
+              );
+            },
+            icon: const Icon(Icons.arrow_forward, color: Colors.white),
+            label: const Text('Detail', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blueAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildCategoryButton(Map<String, dynamic> category, BuildContext context) {
-    return InkWell(
-      onTap: () => _navigateToCategory(context, category['targetScreen']),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  category['icon'],
-                  color: Colors.white,
-                ),
-                SizedBox(width: 12),
-                Text(
-                  category['name'],
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Text(
-              category['description'],
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
+class DetailScreen extends StatelessWidget {
+  final Map<String, dynamic> artist;
+
+  DetailScreen({required this.artist});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(artist['nama_artist']),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.blueAccent), toolbarTextStyle: TextTheme(
+          headline6: TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold),
+        ).bodyText2, titleTextStyle: TextTheme(
+          headline6: TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold),
+        ).headline6,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Jumlah Artis: ${category['totalArtists']}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'ID: ${artist['id_artist']}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent),
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              Text(
+                'Kategori: ${artist['kategori_artist']}',
+                style: TextStyle(fontSize: 16, color: Colors.blueAccent),
+              ),
+              SizedBox(height: 8),
+              Divider(color: Colors.grey),
+              SizedBox(height: 8),
+              Text(
+                'Deskripsi:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              ),
+              Text(
+                '${artist['deskripsi_artist']}',
+                style: TextStyle(fontSize: 14, color: Colors.black),
+              ),
+              SizedBox(height: 8),
+              Divider(color: Colors.grey),
+              SizedBox(height: 8),
+              Text(
+                'Nomor: ${artist['nomor_artist']}',
+                style: TextStyle(fontSize: 16, color: Colors.blueAccent),
+              ),
+            ],
+          ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddOrderPage(),
+            ),
+          );
+        },
+        backgroundColor: Colors.blueAccent,
+        child: Icon(Icons.add, color: Colors.white),
+      ),
     );
-  }
-
-  void _navigateToCategory(BuildContext context, Widget targetScreen) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen));
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      if (index == 0) {
-        
-        return;
-      } else if (index == 1) {
-        
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChecklistScreen()));
-      } else if (index == 2) {
-        
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryScreen()));
-      }
-    });
-  }
-
-  void _onHomeTapped() {
-    
   }
 }
 
 void main() {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: HomeScreen(),
+    theme: ThemeData(
+      primaryColor: Colors.blueAccent,
+      textTheme: TextTheme(
+        bodyText1: TextStyle(color: Colors.blueAccent),
+        bodyText2: TextStyle(color: Colors.blueAccent),
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.blueAccent),
+    ),
   ));
 }

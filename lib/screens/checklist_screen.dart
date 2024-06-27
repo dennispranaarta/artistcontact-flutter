@@ -51,14 +51,14 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3), // Ubah bayangan
+                    offset: Offset(0, 3), 
                   ),
                 ],
               ),
               child: ListTile(
                 title: Text(
                   artistName,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), // Ubah gaya teks
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), 
                 ),
                 trailing: selectedDate != null
                     ? Text('${selectedDate.day}/${selectedDate.month}/${selectedDate.year}')
@@ -67,9 +67,9 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         child: Text('Pilih Tanggal'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue, // Ubah warna tombol
+                          backgroundColor: Colors.blue, 
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0), // Ubah bentuk tombol
+                            borderRadius: BorderRadius.circular(10.0), 
                           ),
                         ),
                       ),

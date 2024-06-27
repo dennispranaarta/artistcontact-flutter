@@ -37,7 +37,7 @@ class _InternationalScreenState extends State<InternationalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Artis Internasional'),
+        title: Text('Artis Nasional'),
       ),
       body: ListView.builder(
         itemCount: nationalArtists.length,
