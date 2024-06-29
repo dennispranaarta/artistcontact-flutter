@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_app/cubit/dataLogin/cubit/data_login_cubit.dart';
@@ -10,6 +8,7 @@ class OrderHistoryScreen extends StatefulWidget {
   const OrderHistoryScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
 }
 
@@ -72,6 +71,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             if (pesananList[index].namaLengkap != null)
                               Text(
                                   'Nama Lengkap: ${pesananList[index].namaLengkap}'),
+                            Text(
+                              'Status: ${pesananList[index].status}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: pesananList[index].status == 'Sudah Selesai'
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
                           ],
                         ),
                         trailing: ElevatedButton(
@@ -107,6 +115,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 Text('Tanggal Tampil: ${pesanan.tanggalTampil}'),
                 if (pesanan.namaLengkap != null)
                   Text('Nama Lengkap: ${pesanan.namaLengkap}'),
+                Text('Status: ${pesanan.status}'),
                 // Add more fields as needed
               ],
             ),

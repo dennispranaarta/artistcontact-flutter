@@ -205,7 +205,7 @@ static Future<List<Pesanan>> getOrders() async {
   }
 
 
-static Future<void> updateOrder(int idPesanan, String tanggalPembayaran, String tanggalTampil) async {
+static Future<void> updateOrder(int idPesanan, String tanggalPembayaran, String tanggalTampil, String status) async {
   final url = Uri.parse('${Endpoints.pesanan}/update/$idPesanan');
   final response = await http.put(
     url,
@@ -215,6 +215,7 @@ static Future<void> updateOrder(int idPesanan, String tanggalPembayaran, String 
     body: {
       'tanggal_pembayaran': tanggalPembayaran,
       'tanggal_tampil': tanggalTampil,
+      'status': status,
     },
   );
 
@@ -223,6 +224,8 @@ static Future<void> updateOrder(int idPesanan, String tanggalPembayaran, String 
     throw Exception(errorData['message'] ?? 'Failed to update order');
   }
 }
+
+
 
 
 static Future<void> deleteOrder(int idPesanan) async {

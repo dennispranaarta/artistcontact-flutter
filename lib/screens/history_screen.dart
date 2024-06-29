@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
-
 import 'package:flutter/material.dart';
 import 'package:my_app/services/data_services.dart';
 import 'package:my_app/dto/pesanan.dart';
@@ -8,6 +6,7 @@ class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HistoryScreenState createState() => _HistoryScreenState();
 }
 
@@ -26,27 +25,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
       setState(() {
         _ordersFuture = DataService.getOrders();
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Order successfully deleted'),
-          backgroundColor: Colors.black,
-        ),
-      );
+      _showSnackBar('Order successfully deleted', Colors.black);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to delete order: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showSnackBar('Failed to delete order: $e', Colors.red);
     }
   }
 
   Future<void> _showUpdateDialog(BuildContext context, Pesanan order) async {
-    final TextEditingController pembayaranController = TextEditingController(text: order.tanggalPembayaran);
-    final TextEditingController tampilController = TextEditingController(text: order.tanggalTampil);
+    final TextEditingController pembayaranController =
+        TextEditingController(text: order.tanggalPembayaran);
+    final TextEditingController tampilController =
+        TextEditingController(text: order.tanggalTampil);
+    String status = order.status;
 
-    Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    // ignore: no_leading_underscores_for_local_identifiers
+    Future<void> _selectDate(
+        BuildContext context, TextEditingController controller) async {
       final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -55,9 +49,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
         builder: (BuildContext context, Widget? child) {
           return Theme(
             data: ThemeData.light().copyWith(
-              primaryColor: Colors.blue,
-              buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
-              colorScheme: const ColorScheme.light(primary: Colors.blue).copyWith(secondary: Colors.blueAccent),
+              primaryColor: const Color.fromARGB(221, 30, 30, 30),
+              buttonTheme:
+                  const ButtonThemeData(textTheme: ButtonTextTheme.primary),
+              colorScheme: const ColorScheme.light(
+                primary: Color.fromARGB(221, 30, 30, 30),
+                secondary: Color.fromARGB(221, 30, 30, 30),
+              ),
             ),
             child: child!,
           );
@@ -65,7 +63,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       );
 
       if (picked != null) {
-        controller.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+        controller.text =
+            "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       }
     }
 
@@ -89,8 +88,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 decoration: InputDecoration(
                   labelText: 'Payment Date',
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today, color: Colors.blue),
-                    onPressed: () => _selectDate(context, pembayaranController),
+                    icon: const Icon(Icons.calendar_today,
+                        color: Color.fromARGB(221, 30, 30, 30)),
+                    onPressed: () =>
+                        _selectDate(context, pembayaranController),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -104,13 +105,35 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 decoration: InputDecoration(
                   labelText: 'Show Date',
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today, color: Colors.blue),
+                    icon: const Icon(Icons.calendar_today,
+                        color: Color.fromARGB(221, 30, 30, 30)),
                     onPressed: () => _selectDate(context, tampilController),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: status,
+                decoration: InputDecoration(
+                  labelText: 'Status',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                items: ['Belum Selesai', 'Sudah Selesai']
+                    .map((label) => DropdownMenuItem(
+                          value: label,
+                          child: Text(label),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    status = value!;
+                  });
+                },
               ),
             ],
           ),
@@ -128,11 +151,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: const Color.fromARGB(221, 30, 30, 30), // Set the background color here
+                backgroundColor: const Color.fromARGB(221, 30, 30, 30),
               ),
               child: const Text(
                 'Update',
-                style: TextStyle(color: Colors.white), // Ensure the text color is white
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {
                 final newTanggalPembayaran = pembayaranController.text;
@@ -143,23 +166,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     order.idPesanan,
                     newTanggalPembayaran,
                     newTanggalTampil,
+                    status,
                   );
                   setState(() {
                     _ordersFuture = DataService.getOrders();
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Order successfully updated'),
-                      backgroundColor: Colors.black,
-                    ),
-                  );
+                  _showSnackBar('Order successfully updated', Colors.black);
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Failed to update order: $e'),
-                      backgroundColor: Colors.black,
-                    ),
-                  );
+                  _showSnackBar('Failed to update order: $e', Colors.red);
                 }
               },
             ),
@@ -187,6 +201,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               _buildDetailRow(Icons.person, 'Artist ID', order.idArtist.toString()),
               _buildDetailRow(Icons.date_range, 'Payment Date', order.tanggalPembayaran),
               _buildDetailRow(Icons.event, 'Show Date', order.tanggalTampil),
+              _buildDetailRow(Icons.info, 'Status', order.status), // Added status detail
               // Add more details as needed
             ],
           ),
@@ -208,6 +223,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
+    Color statusColor = Colors.grey; // Default color for unknown status or fallback
+
+    // Determine color based on status
+    switch (label) {
+      case 'Status':
+        if (value == 'Belum Selesai') {
+          statusColor = Colors.red;
+        } else if (value == 'Sudah Selesai') {
+          statusColor = Colors.green;
+        }
+        break;
+      // Add more cases as needed for different details
+
+      default:
+        break;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -219,12 +251,30 @@ class _HistoryScreenState extends State<HistoryScreen> {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(color: Colors.black54),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 5,
+                  backgroundColor: statusColor,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  value,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
       ),
     );
   }
@@ -284,6 +334,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         Text('Artist ID: ${order.idArtist}'),
                         Text('Payment Date: ${order.tanggalPembayaran}'),
                         Text('Show Date: ${order.tanggalTampil}'),
+                        Text('Status: ${order.status}'), // Added status subtitle
                       ],
                     ),
                     trailing: Row(
@@ -347,11 +398,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.red, // Keep the delete button color red
+                    backgroundColor: Colors.red,
                   ),
                   child: const Text(
                     'Delete',
-                    style: TextStyle(color: Colors.white), // Ensure the text color is white
+                    style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () => Navigator.of(context).pop(true),
                 ),
